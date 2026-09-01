@@ -1,16 +1,21 @@
-import { findPairing, defaultPairingId, pairingCatalog } from './data.js';
+import { findPairing } from './data.js';
 
 const observations=[];
-let activeExperiment=pairingCatalog.find(p=>p.id===defaultPairingId)??pairingCatalog[0];
+let activeExperiment=findPairing({anchorType:'food',anchor:'Mushroom Risotto',mode:'menu'});
 
-export function requestPairing(input={}){const anchorType=input.anchorType==='tea'?'tea':'food';const mode=input.mode==='chaos'?'chaos':'menu';activeExperiment=findPairing({anchorType,anchor:input.anchor??'',mode});return inspectPairing();}
-export function setPairingMode(mode){return requestPairing({anchorType:'food',anchor:'',mode});}
-export function resetObservations(){observations.length=0;activeExperiment=pairingCatalog.find(p=>p.id===defaultPairingId)??pairingCatalog[0];}
+export function requestPairing(input={}){
+ const anchorType=input.anchorType==='tea'?'tea':'food';const mode=input.mode==='chaos'?'chaos':'menu';
+ const found=findPairing({anchorType,anchor:input.anchor??'',mode});
+ if(!found)return {supported:false,anchorType,anchor:String(input.anchor??''),mode,reason:'Blendgine does not have enough evidence for that anchor yet. It will not silently substitute another item.'};
+ activeExperiment=found;return inspectPairing();
+}
+export function setPairingMode(mode){return requestPairing({anchorType:'food',anchor:'Mushroom Risotto',mode});}
+export function resetObservations(){observations.length=0;activeExperiment=findPairing({anchorType:'food',anchor:'Mushroom Risotto',mode:'menu'});}
 
 export function inspectPairing(input={}){
- if(input.anchorType||input.anchor||input.mode){const mode=input.mode??activeExperiment.mode;const anchorType=input.anchorType??'food';activeExperiment=findPairing({anchorType,anchor:input.anchor??'',mode});}
+ if(input.anchorType||input.anchor||input.mode){const found=findPairing({anchorType:input.anchorType??'food',anchor:input.anchor??'',mode:input.mode??activeExperiment.mode});if(!found)return {supported:false,reason:'No evidence-backed candidate is available for that anchor yet.'};activeExperiment=found;}
  const experiment=activeExperiment;
- return {mode:experiment.mode,experiment,food:experiment.food,tea:experiment.tea,formula:{id:experiment.id,name:`${experiment.tea.name} × ${experiment.food.name}`,preparation:experiment.tea.preparation},hypothesis:experiment.hypothesis,evidence:experiment.evidence,preparationContext:experiment.tea.processing,provenance:`${experiment.evidence.level}_external_evidence → Blendgine_hypothesis`,sensoryAuthority:'human',evidenceBoundary:'Direct database evidence, bridged literature evidence, preparation assumptions, and human sensory observations remain separately labeled.'};
+ return {supported:true,mode:experiment.mode,experiment,food:experiment.food,tea:experiment.tea,formula:{id:experiment.id,name:`${experiment.tea.name} × ${experiment.food.name}`,preparation:experiment.tea.preparation},hypothesis:experiment.hypothesis,evidence:experiment.evidence,preparationContext:experiment.tea.processing,provenance:`${experiment.evidence.level}_external_evidence → generated_Blendgine_hypothesis`,sensoryAuthority:'human',evidenceBoundary:'The recommendation is generated from evidence-backed sensory profiles. It is a pairing hypothesis, not a predetermined recipe or universal taste claim.'};
 }
 
 export function recordSensoryObservation(input){
@@ -22,4 +27,4 @@ export function recordSensoryObservation(input){
 }
 
 export function whatDidHumanTeach(){return{observations:observations.map(o=>({...o})),interpretationBoundary:'These are attributed human observations about specific tea-food pairings and preparation contexts, not facts about universal taste.'};}
-export function refinePairing(){const experiment=activeExperiment;const relevant=[...observations].reverse().find(o=>o.experimentId===experiment.id);if(!relevant)return{proposal:'Taste the pairing first. Blendgine will not invent a sensory adjustment without a human observation.',reason:'There is not enough human sensory evidence to justify an adjustment yet.',evidenceChain:['pairing_hypothesis'],status:'proposal_requires_human_tasting'};return{proposal:experiment.remix.proposal,reason:experiment.remix.reason,sourceObservationId:relevant.id,evidenceChain:[`${experiment.evidence.level}_evidence`,'pairing_hypothesis',relevant.id],preparationContext:relevant.preparationContext,status:'proposal_requires_human_tasting'};}
+export function refinePairing(){const experiment=activeExperiment;const relevant=[...observations].reverse().find(o=>o.experimentId===experiment.id);if(!relevant)return{proposal:'Taste the pairing first. Blendgine will not invent a sensory adjustment without a human observation.',reason:'There is not enough human sensory evidence to justify an adjustment yet.',evidenceChain:['generated_pairing_hypothesis'],status:'proposal_requires_human_tasting'};return{proposal:experiment.remix.proposal,reason:experiment.remix.reason,sourceObservationId:relevant.id,evidenceChain:[`${experiment.evidence.level}_evidence`,'generated_pairing_hypothesis',relevant.id],preparationContext:relevant.preparationContext,status:'proposal_requires_human_tasting'};}
