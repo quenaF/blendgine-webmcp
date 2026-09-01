@@ -1,42 +1,51 @@
-import { pairingExperiments, defaultMode } from './data.js';
+import { findPairing, defaultPairingId, pairingCatalog } from './data.js';
 
 const observations = [];
-let activeMode = defaultMode;
+let activeExperiment = pairingCatalog.find(p => p.id === defaultPairingId) ?? pairingCatalog[0];
 
-export function setPairingMode(mode) {
-  if (!pairingExperiments[mode]) throw new Error('Unknown pairing mode');
-  activeMode = mode;
+export function requestPairing(input = {}) {
+  const anchorType = input.anchorType === 'tea' ? 'tea' : 'food';
+  const mode = input.mode === 'chaos' ? 'chaos' : 'menu';
+  activeExperiment = findPairing({ anchorType, anchor: input.anchor ?? '', mode });
   return inspectPairing();
 }
-export function resetObservations() { observations.length = 0; activeMode = defaultMode; }
+
+export function setPairingMode(mode) {
+  return requestPairing({ anchorType:'food', anchor:'', mode });
+}
+
+export function resetObservations() {
+  observations.length = 0;
+  activeExperiment = pairingCatalog.find(p => p.id === defaultPairingId) ?? pairingCatalog[0];
+}
 
 export function inspectPairing(input = {}) {
-  const mode = input.mode && pairingExperiments[input.mode] ? input.mode : activeMode;
-  const experiment = pairingExperiments[mode];
+  if (input.anchorType || input.anchor || input.mode) {
+    const mode = input.mode ?? activeExperiment.mode;
+    const anchorType = input.anchorType ?? 'food';
+    activeExperiment = findPairing({ anchorType, anchor: input.anchor ?? '', mode });
+  }
+  const experiment = activeExperiment;
   return {
-    mode,
+    mode: experiment.mode,
     experiment,
     food: experiment.food,
     tea: experiment.tea,
     formula: { id: experiment.id, name: `${experiment.tea.name} × ${experiment.food.name}`, preparation: experiment.tea.preparation },
-    ingredients: [],
-    scientificEvidence: [],
-    pairingSignals: [],
     hypothesis: experiment.hypothesis,
-    provenance: 'pairing_reference_signals → Blendgine_hypothesis',
+    provenance: 'verified_external_evidence_pending → Blendgine_hypothesis',
     sensoryAuthority: 'human',
-    evidenceBoundary: 'Demo pairing rationale is a hypothesis layer. External compound-level records must be independently sourced before being represented as scientific evidence.'
+    evidenceBoundary: 'The interaction model is complete. Compound-level scientific evidence will be attached only after the external records are verified and attributed.'
   };
 }
 
 export function recordSensoryObservation(input) {
   if (!input?.descriptor?.trim() || !input?.humanWords?.trim()) throw new Error('descriptor and humanWords are required');
-  const mode = input.mode && pairingExperiments[input.mode] ? input.mode : activeMode;
-  const experiment = pairingExperiments[mode];
+  const experiment = activeExperiment;
   const observation = {
     id: `obs-${String(observations.length + 1).padStart(3, '0')}`,
     experimentId: experiment.id,
-    mode,
+    mode: experiment.mode,
     pairing: `${experiment.tea.name} × ${experiment.food.name}`,
     food: experiment.food.name,
     tea: experiment.tea.name,
@@ -57,10 +66,9 @@ export function whatDidHumanTeach() {
   return { observations: observations.map(o => ({ ...o })), interpretationBoundary: 'These are attributed human observations about specific tea-food pairings, not facts about universal taste.' };
 }
 
-export function refinePairing(input = {}) {
-  const mode = input.mode && pairingExperiments[input.mode] ? input.mode : activeMode;
-  const experiment = pairingExperiments[mode];
-  const relevant = [...observations].reverse().find(o => o.mode === mode);
+export function refinePairing() {
+  const experiment = activeExperiment;
+  const relevant = [...observations].reverse().find(o => o.experimentId === experiment.id);
   if (!relevant) return { proposal: 'Taste the pairing first. Blendgine will not invent a sensory adjustment without a human observation.', reason: 'There is not enough human sensory evidence to justify an adjustment yet.', evidenceChain: ['pairing_hypothesis'], status: 'proposal_requires_human_tasting' };
   return { proposal: experiment.remix.proposal, reason: experiment.remix.reason, sourceObservationId: relevant.id, evidenceChain: ['pairing_hypothesis', relevant.id], status: 'proposal_requires_human_tasting' };
 }
