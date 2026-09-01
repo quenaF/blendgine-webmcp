@@ -14,25 +14,32 @@ test('food anchor is preserved while Blendgine generates an herbal tea candidate
   assert.match(result.evidenceBoundary, /generated/i);
 });
 
-test('tea anchor is preserved while Blendgine generates a food candidate', () => {
+test('Fig Leaf keeps direct tea sensory evidence separate from the toast assumption', () => {
   const result = requestPairing({ anchorType:'tea', anchor:'Fig Leaf', mode:'menu' });
-  assert.equal(result.supported, true);
   assert.equal(result.tea.name, 'Fig Leaf');
-  assert.ok(result.food.name);
   assert.equal(result.tea.processing.state, 'slightly toasted');
+  assert.equal(result.evidence.level, 'verified');
+  assert.equal(result.evidence.records[0].doi, '10.3390/beverages11010016');
+  assert.equal(result.evidence.records[0].plantPart, 'leaf');
+  assert.match(result.evidence.records[0].doesNotSupport, /toast-specific/i);
 });
 
-test('Heal-All is authoritative and never silently replaced', () => {
+test('Heal-All has plant-part-aware volatile and tea taste provenance', () => {
   const result = requestPairing({ anchorType:'tea', anchor:'Heal-All', mode:'menu' });
   assert.equal(result.tea.name, 'Heal-All');
-  assert.equal(result.evidence.level, 'bridged');
+  assert.equal(result.evidence.level, 'verified');
+  assert.equal(result.evidence.records.length, 2);
+  assert.equal(result.evidence.records[0].doi, '10.13386/j.issn1002-0306.2019.13.029');
+  assert.equal(result.evidence.records[1].pmid, '24946541');
 });
 
-test('chaos mode generates from a deliberately ridiculous food pool', () => {
+test('Chaos Lab can use direct loblolly needle chemistry without claiming spruce chemistry', () => {
   const result = requestPairing({ anchorType:'food', anchor:'Hot Honey Pizza', mode:'chaos' });
   assert.equal(result.food.name, 'Hot Honey Pizza');
-  assert.ok(result.tea.name);
   assert.equal(result.mode, 'chaos');
+  assert.equal(result.tea.name, 'Loblolly Pine Needle · Spruce Tip · Lemon');
+  assert.equal(result.evidence.records[0].doi, '10.1080/10412905.2006.9699378');
+  assert.match(result.evidence.records[0].doesNotSupport, /spruce-tip/i);
 });
 
 test('unknown anchors fail explicitly instead of substituting a recipe', () => {
