@@ -19,39 +19,14 @@ export const foodProfiles=[
  {id:'honey-bun',name:'Honey Bun',detail:'sticky glaze · cinnamon · soft pastry',emoji:'🍯',signals:['sweet','spiced','rich','baked']}
 ];
 
-const complement={toasted:['roasted','baked'],honeyed:['sweet','baked'],green:['creamy','fatty'],herbaceous:['savory'],herbal:['savory','cheesy'],aromatic:['spiced'],woody:['roasted'],tart:['rich','sweet'],fruity:['bitter','sour'],bright:['rich','fried'],acidic:['fatty','sweet'],resinous:['sweet','spiced'],evergreen:['sweet','spiced'],citrus:['fried','fatty'],floral:['salty','sour'],lemony:['fried','salty'],soft:['spicy']};
+const complement={toasted:['roasted','baked'],honeyed:['sweet','baked'],green:['creamy','fatty'],herbaceous:['savory'],herbal:['savory','cheesy'],aromatic:['spiced'],woody:['roasted'],tart:['rich','sweet'],fruity:['bitter','sour'],bright:['rich','fried'],acidic:['fatty','sweet'],resinous:['sweet','spicy'],evergreen:['sweet','spicy'],citrus:['fried','fatty'],floral:['salty','sour'],lemony:['fried','salty'],soft:['spicy']};
 const contrast={green:['rich'],bright:['fatty'],acidic:['rich'],citrus:['rich'],floral:['savory'],soft:['sour'],tart:['fatty'],resinous:['creamy'],evergreen:['rich']};
 const chaosFoods=new Set(['hot-honey-pizza','birthday-cake','fried-chicken-waffles','nacho-cheese-doritos','sour-gummy-worms','dill-pickle','honey-bun']);
 
-function scoreTeaFood(tea,food,mode){
- const matchedTeaSignals=new Set();const matchedFoodSignals=new Set();const reasons=[];let relationshipPoints=0;
- for(const signal of tea.signals){for(const f of food.signals){if((complement[signal]||[]).includes(f)){relationshipPoints+=2;matchedTeaSignals.add(signal);matchedFoodSignals.add(f);reasons.push(`${signal} ↔ ${f} complement`);}else if((contrast[signal]||[]).includes(f)){relationshipPoints+=1;matchedTeaSignals.add(signal);matchedFoodSignals.add(f);reasons.push(`${signal} ↔ ${f} contrast`);}}}
- // Breadth matters more than repeatedly hitting generic rich/fatty/sweet signals.
- const breadth=matchedTeaSignals.size*2+matchedFoodSignals.size;
- const genericHits=[...matchedFoodSignals].filter(s=>['rich','fatty','sweet','savory'].includes(s)).length;
- const genericPenalty=Math.max(0,genericHits-2)*2;
- const evidenceBonus=tea.evidenceQuality||0;
- const modeBonus=mode==='chaos'&&chaosFoods.has(food.id)?1:mode==='menu'&&!chaosFoods.has(food.id)?1:0;
- const score=relationshipPoints+breadth+evidenceBonus+modeBonus-genericPenalty;
- return {score,reasons:[...new Set(reasons)],breakdown:{relationshipPoints,breadth,evidenceBonus,modeBonus,genericPenalty,matchedTeaSignals:[...matchedTeaSignals],matchedFoodSignals:[...matchedFoodSignals]}};
-}
+function scoreTeaFood(tea,food,mode){const matchedTeaSignals=new Set(),matchedFoodSignals=new Set(),reasons=[];let relationshipPoints=0;for(const signal of tea.signals){for(const f of food.signals){if((complement[signal]||[]).includes(f)){relationshipPoints+=2;matchedTeaSignals.add(signal);matchedFoodSignals.add(f);reasons.push(`${signal} ↔ ${f} complement`);}else if((contrast[signal]||[]).includes(f)){relationshipPoints+=1;matchedTeaSignals.add(signal);matchedFoodSignals.add(f);reasons.push(`${signal} ↔ ${f} contrast`);}}}const breadth=matchedTeaSignals.size*2+matchedFoodSignals.size;const genericHits=[...matchedFoodSignals].filter(s=>['rich','fatty','sweet','savory'].includes(s)).length;const genericPenalty=Math.max(0,genericHits-2)*2;const evidenceBonus=tea.evidenceQuality||0;const score=relationshipPoints+breadth+evidenceBonus-genericPenalty;return{score,reasons:[...new Set(reasons)],breakdown:{relationshipPoints,breadth,evidenceBonus,genericPenalty,matchedTeaSignals:[...matchedTeaSignals],matchedFoodSignals:[...matchedFoodSignals]}};}
 function matches(item,q){if(!item)return false;const n=String(q).trim().toLowerCase();return [item.name,item.id,...(item.ingredients||[])].some(v=>String(v).toLowerCase()===n||String(v).toLowerCase().includes(n));}
-function buildExperiment(tea,food,mode,score){
- const evidence=tea.evidence;const why=score.reasons.slice(0,3);
- return {id:`${mode}-${tea.id}-${food.id}`,mode,modeLabel:mode==='chaos'?'Chaos Lab':'Pairing Menu',modeEmoji:mode==='chaos'?'🤪':'🍽️',food,tea,evidence,hypothesis:{id:`hyp-${tea.id}-${food.id}`,basis:[`Blendgine compared ${tea.name}'s sourced sensory signals (${tea.signals.join(', ')}) with ${food.name}'s food profile.`,why.length?`Strongest candidate signals: ${why.join('; ')}.`:'This is an exploratory candidate with limited signal overlap.',`Score breadth: ${score.breakdown.matchedTeaSignals.length} tea signals × ${score.breakdown.matchedFoodSignals.length} food signals; generic-signal penalty ${score.breakdown.genericPenalty}.`],epistemicStatus:'evidence_informed_hypothesis',boundary:'The ingredient evidence is scientific; the tea-food match is a generated hypothesis, not a scientifically proven preference. Human tasting decides whether it works.'},defaultDescriptor:'interesting',remix:{proposal:`Change one variable—brew strength, temperature, or bite size—and retaste ${tea.name} with ${food.name}.`,reason:'The next proposal uses the human observation to test which sensory variable is driving the experience.'},score:score.score,scoreBreakdown:score.breakdown};
-}
+function buildExperiment(tea,food,mode,score){const evidence=tea.evidence,why=score.reasons.slice(0,3);return{id:`${mode}-${tea.id}-${food.id}`,mode,modeLabel:mode==='chaos'?'Chaos Lab':'Pairing Menu',modeEmoji:mode==='chaos'?'🤪':'🍽️',food,tea,evidence,hypothesis:{id:`hyp-${tea.id}-${food.id}`,basis:[`Blendgine compared ${tea.name}'s sourced sensory signals (${tea.signals.join(', ')}) with ${food.name}'s food profile.`,why.length?`Strongest candidate signals: ${why.join('; ')}.`:'This is an exploratory candidate with limited signal overlap.',`Score breadth: ${score.breakdown.matchedTeaSignals.length} tea signals × ${score.breakdown.matchedFoodSignals.length} food signals; generic-signal penalty ${score.breakdown.genericPenalty}.`],epistemicStatus:'evidence_informed_hypothesis',boundary:'The ingredient evidence is scientific; the tea-food match is a generated hypothesis, not a scientifically proven preference. Human tasting decides whether it works.'},defaultDescriptor:'interesting',remix:{proposal:`Change one variable—brew strength, temperature, or bite size—and retaste ${tea.name} with ${food.name}.`,reason:'The next proposal uses the human observation to test which sensory variable is driving the experience.'},score:score.score,scoreBreakdown:score.breakdown};}
 
-export function rankPairings({anchorType='food',anchor='',mode='menu'}={}){
- if(anchorType==='tea'){
-  const tea=teaProfiles.find(t=>matches(t,anchor));if(!tea)return [];
-  return foodProfiles.map(food=>({tea,food,...scoreTeaFood(tea,food,mode)})).filter(c=>mode!=='chaos'||chaosFoods.has(c.food.id)).sort((a,b)=>b.score-a.score||a.food.name.localeCompare(b.food.name));
- }
- const food=foodProfiles.find(f=>matches(f,anchor));if(!food)return [];
- return teaProfiles.map(tea=>({tea,food,...scoreTeaFood(tea,food,mode)})).sort((a,b)=>b.score-a.score||a.tea.name.localeCompare(b.tea.name));
-}
+export function rankPairings({anchorType='food',anchor='',mode='menu'}={}){if(anchorType==='tea'){const tea=teaProfiles.find(t=>matches(t,anchor));if(!tea)return[];return foodProfiles.map(food=>({tea,food,...scoreTeaFood(tea,food,mode)})).filter(c=>mode==='chaos'?chaosFoods.has(c.food.id):!chaosFoods.has(c.food.id)).sort((a,b)=>b.score-a.score||a.food.name.localeCompare(b.food.name));}const food=foodProfiles.find(f=>matches(f,anchor));if(!food)return[];return teaProfiles.map(tea=>({tea,food,...scoreTeaFood(tea,food,mode)})).sort((a,b)=>b.score-a.score||a.tea.name.localeCompare(b.tea.name));}
 export function findPairing(input={}){const candidates=rankPairings(input);const best=candidates[0];return best?buildExperiment(best.tea,best.food,input.mode==='chaos'?'chaos':'menu',best):null;}
-
-export const defaultPairingId='generated-default';
-export const pairingCatalog=[];
-export const availableTeas=teaProfiles;
-export const availableFoods=foodProfiles;
+export const defaultPairingId='generated-default';export const pairingCatalog=[];export const availableTeas=teaProfiles;export const availableFoods=foodProfiles;
