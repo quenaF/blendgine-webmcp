@@ -2,8 +2,8 @@ export const ingredients = {
   peppermint: {
     id: 'peppermint', name: 'Peppermint', botanical: 'Mentha × piperita',
     sensory: ['cooling', 'bright', 'minty'],
-    compounds: ['menthol', 'menthone'],
-    evidence: { type: 'scientific_reference', note: 'Menthol and menthone are characteristic volatile constituents used here as pairing signals, not as a claim that chemistry determines taste.' }
+    compounds: ['menthol', 'menthone', 'limonene'],
+    evidence: { type: 'scientific_reference', note: 'Characteristic volatile constituents are used here as pairing signals, not as a claim that chemistry determines taste.' }
   },
   pine: {
     id: 'pine', name: 'Pine needle', botanical: 'Pinus spp.',
@@ -34,8 +34,8 @@ export const pairingHypothesis = {
   id: 'hypothesis-001',
   formulaId: starterFormula.id,
   basis: [
-    'Pine and peppermint offer overlapping terpene-family signals worth testing.',
-    'Lemon balm provides a softer citrus/herbal bridge between cooling mint and resinous pine.'
+    'Pine and peppermint share limonene in this reference model, creating a concrete compound-overlap signal worth testing.',
+    'Lemon balm contributes citrus-associated volatile signals that make it a candidate bridge in the formulation.'
   ],
   epistemicStatus: 'hypothesis',
   boundary: 'Chemical composition can motivate a tasting hypothesis; it cannot establish whether the blend tastes good.'
