@@ -1,67 +1,54 @@
-export const pairingCatalog = [
-  {
-    id:'menu-figleaf-risotto', mode:'menu', modeLabel:'Pairing Menu', modeEmoji:'🍽️',
-    food:{id:'mushroom-risotto',name:'Mushroom Risotto',detail:'roasted mushrooms · parmesan · thyme',emoji:'🍄'},
-    tea:{id:'fig-leaf',name:'Fig Leaf',detail:'green · herbaceous · softly toasted',ingredients:['fig leaf'],emoji:'🍃',preparation:'slightly toasted · hot infusion',processing:{state:'slightly toasted',source:'assumed_default',confidence:'medium'}},
-    evidence:{level:'bridged',sources:['peer_reviewed_sensory_literature','FlavorDB_descriptor_mapping'],note:'Fig-leaf tea has direct sensory and volatile literature. This demo assumes a slightly toasted consumable preparation; the published study establishes that processing materially changes the sensory profile.'},
-    hypothesis:{id:'hyp-menu-001',basis:['Published fig-leaf tea research supports green/herbaceous sensory character and shows processing can shift the volatile profile toward fruitier and honey-like notes.','A lightly toasted leaf profile is a testable bridge to browned mushroom notes while retaining contrast against creamy richness.'],epistemicStatus:'evidence_informed_hypothesis',boundary:'The fig-leaf sensory evidence is literature-grounded; the slightly toasted preparation is an explicit demo assumption, and the pairing still requires human tasting.'},
-    defaultWords:'',defaultDescriptor:'interesting',remix:{trigger:['heavy','rich','green','toast'],proposal:'Try a slightly lighter fig-leaf infusion and retaste against the risotto.',reason:'The human observation can tell us whether the toasted bridge or the green contrast is dominating.'}
-  },
-  {
-    id:'menu-rosehip-chocolate', mode:'menu', modeLabel:'Pairing Menu', modeEmoji:'🍽️',
-    food:{id:'dark-chocolate-torte',name:'Dark Chocolate Torte',detail:'cocoa · bittersweet · silky',emoji:'🍫'},
-    tea:{id:'rosehip-hibiscus-sumac',name:'Rose Hip · Hibiscus · Sumac',detail:'tangy · fruity · bright · deeply red',ingredients:['rose hip','hibiscus','sumac'],emoji:'🌺',preparation:'dried ingredients · hot infusion',processing:{state:'prepared for tea',source:'assumed_default',confidence:'medium'}},
-    evidence:{level:'bridged',sources:['FlavorDB','botanical_flavor_literature'],note:'Blend-level profile is composed from ingredient evidence; it is not represented as a single FlavorDB entity.'},
-    hypothesis:{id:'hyp-menu-002',basis:['Bright fruit and tart sensory signals make this a plausible contrast to dense cocoa richness.','The hypothesis is generated from ingredient-level evidence rather than pretending the proprietary blend exists in a flavor database.'],epistemicStatus:'evidence_informed_hypothesis',boundary:'Ingredient evidence motivates the experiment; preference and balance remain human sensory judgments.'},
-    defaultWords:'',defaultDescriptor:'balanced',remix:{trigger:['sour','sharp','bitter'],proposal:'Shorten the infusion slightly and retaste with the chocolate.',reason:'The human response may indicate that tartness is competing with the dessert rather than refreshing it.'}
-  },
-  {
-    id:'menu-healall-goatcheese', mode:'menu', modeLabel:'Pairing Menu', modeEmoji:'🍽️',
-    food:{id:'goat-cheese-toast',name:'Goat Cheese Toast',detail:'tangy cheese · toasted bread · olive oil',emoji:'🥖'},
-    tea:{id:'heal-all',name:'Heal-All',detail:'herbal · green · aromatic',ingredients:['self-heal (Prunella vulgaris)'],emoji:'🌿',preparation:'dried herb · hot infusion',processing:{state:'processed/dried for tea',source:'assumed_default',confidence:'medium'}},
-    evidence:{level:'bridged',sources:['peer_reviewed_volatile_literature','FlavorDB_descriptor_mapping'],note:'Prunella vulgaris has published volatile-component research. Flavor descriptors are bridged to FlavorDB vocabulary rather than attributed to a direct FlavorDB ingredient record.'},
-    hypothesis:{id:'hyp-menu-003',basis:['Published Prunella volatile research supports a complex aromatic profile that can be normalized into documented flavor vocabulary.','A green aromatic infusion creates a plausible contrast experiment against tangy, fatty cheese and toast.'],epistemicStatus:'evidence_bridge_hypothesis',boundary:'Blendgine distinguishes published botanical chemistry from the FlavorDB vocabulary used to reason about a pairing.'},
-    defaultWords:'',defaultDescriptor:'interesting',remix:{trigger:['green','bitter','soft'],proposal:'Retaste with a smaller bite of goat cheese and note whether the herb reads fresher or more bitter.',reason:'The human observation determines which part of the bridged profile is actually perceptible in the cup.'}
-  },
-  {
-    id:'chaos-pine-honeybun', mode:'chaos', modeLabel:'Chaos Lab', modeEmoji:'🤪',
-    food:{id:'honey-bun',name:'Honey Bun',detail:'sticky glaze · cinnamon · soft pastry',emoji:'🍯'},
-    tea:{id:'pine-spruce-lemon',name:'Loblolly Pine Needle · Spruce Tip · Lemon',detail:'resinous · evergreen · citrus · bright',ingredients:['loblolly pine needle','spruce tip','lemon'],emoji:'🌲',preparation:'processed edible botanicals · hot infusion',processing:{state:'prepared for tea consumption',source:'assumed_default',confidence:'medium'}},
-    evidence:{level:'bridged',sources:['botanical_volatile_literature','FlavorDB','PubChem'],note:'Evergreen sensory language is mapped only where ingredient-to-compound evidence supports it; lemon has established flavor-database coverage.'},
-    hypothesis:{id:'hyp-chaos-001',basis:['Evergreen/resinous and citrus signals make this a deliberately weird aromatic contrast to cinnamon glaze.','The point is not to prove the pairing works—it is to create a traceable experiment a human can actually judge.'],epistemicStatus:'evidence_informed_hypothesis',boundary:'No compound is attributed to loblolly or spruce unless an ingredient-specific source supports that association.'},
-    defaultWords:'',defaultDescriptor:'interesting',remix:{trigger:['pine','resinous','christmas','tree','strong'],proposal:'Brew the evergreen blend lighter and retaste with the honey bun.',reason:'If the human experiences the evergreen character as overpowering, concentration is the cleanest next variable to test.'}
-  },
-  {
-    id:'chaos-lemonbalm-pickle', mode:'chaos', modeLabel:'Chaos Lab', modeEmoji:'🤪',
-    food:{id:'dill-pickle',name:'Dill Pickle',detail:'salty · sour · dill',emoji:'🥒'},
-    tea:{id:'maypop-lemonbalm-chamomile',name:'Maypop Passionflower · Lemon Balm · Chamomile',detail:'floral · lemony · soft · aromatic',ingredients:['maypop passionflower','lemon balm','chamomile'],emoji:'🌼',preparation:'dried botanicals · warm infusion',processing:{state:'prepared/dried for tea',source:'assumed_default',confidence:'medium'}},
-    evidence:{level:'bridged',sources:['FlavorDB','botanical_flavor_literature'],note:'Direct database coverage varies by ingredient, so the blend-level profile preserves that uncertainty.'},
-    hypothesis:{id:'hyp-chaos-002',basis:['Floral and lemony cues make a high-contrast experiment against salty dill acidity.','This is intentionally a Chaos Lab hypothesis: enough evidence to justify tasting, not enough to predict delight.'],epistemicStatus:'evidence_informed_hypothesis',boundary:'A flavor signal can justify an experiment; only a human can say whether the result is delightful or terrible.'},
-    defaultWords:'',defaultDescriptor:'interesting',remix:{trigger:['sour','sharp','floral'],proposal:'Cool the infusion slightly and retaste with a smaller pickle bite.',reason:'The human feedback can reveal whether temperature and bite size soften the contrast.'}
-  }
+export const teaProfiles=[
+ {id:'fig-leaf',name:'Fig Leaf',detail:'green · herbaceous · softly toasted',ingredients:['fig leaf'],emoji:'🍃',preparation:'slightly toasted · hot infusion',processing:{state:'slightly toasted',source:'assumed_default',confidence:'medium'},signals:['green','herbaceous','toasted','honeyed'],evidence:{level:'bridged',sources:['peer_reviewed_sensory_literature','FlavorDB_descriptor_mapping'],note:'Fig-leaf tea has direct sensory and volatile literature; processing materially changes its profile.'}},
+ {id:'heal-all',name:'Heal-All',detail:'herbal · green · aromatic',ingredients:['self-heal (Prunella vulgaris)'],emoji:'🌿',preparation:'dried herb · hot infusion',processing:{state:'processed/dried for tea',source:'assumed_default',confidence:'medium'},signals:['green','herbal','aromatic','woody'],evidence:{level:'bridged',sources:['peer_reviewed_volatile_literature','FlavorDB_descriptor_mapping'],note:'Prunella vulgaris volatile research is bridged into controlled flavor vocabulary.'}},
+ {id:'rosehip-hibiscus-sumac',name:'Rose Hip · Hibiscus · Sumac',detail:'tangy · fruity · bright · deeply red',ingredients:['rose hip','hibiscus','sumac'],emoji:'🌺',preparation:'dried ingredients · hot infusion',processing:{state:'prepared for tea',source:'assumed_default',confidence:'medium'},signals:['tart','fruity','bright','acidic'],evidence:{level:'bridged',sources:['FlavorDB','botanical_flavor_literature'],note:'Blend profile is composed from ingredient evidence, not represented as one FlavorDB entity.'}},
+ {id:'pine-spruce-lemon',name:'Loblolly Pine Needle · Spruce Tip · Lemon',detail:'resinous · evergreen · citrus · bright',ingredients:['loblolly pine needle','spruce tip','lemon'],emoji:'🌲',preparation:'processed edible botanicals · hot infusion',processing:{state:'prepared for tea consumption',source:'assumed_default',confidence:'medium'},signals:['resinous','evergreen','citrus','bright'],evidence:{level:'bridged',sources:['botanical_volatile_literature','FlavorDB','PubChem'],note:'Evergreen evidence remains ingredient-specific; lemon has established flavor-database coverage.'}},
+ {id:'maypop-lemonbalm-chamomile',name:'Maypop Passionflower · Lemon Balm · Chamomile',detail:'floral · lemony · soft · aromatic',ingredients:['maypop passionflower','lemon balm','chamomile'],emoji:'🌼',preparation:'dried botanicals · warm infusion',processing:{state:'prepared/dried for tea',source:'assumed_default',confidence:'medium'},signals:['floral','lemony','soft','aromatic'],evidence:{level:'bridged',sources:['FlavorDB','botanical_flavor_literature'],note:'Direct database coverage varies by ingredient, so blend-level uncertainty is preserved.'}}
 ];
 
-export const defaultPairingId='menu-figleaf-risotto';
-export const availableTeas=pairingCatalog.map(p=>p.tea).filter((tea,index,all)=>all.findIndex(t=>t.id===tea.id)===index);
-export const availableFoods=pairingCatalog.map(p=>p.food).filter((food,index,all)=>all.findIndex(f=>f.id===food.id)===index);
+export const foodProfiles=[
+ {id:'mushroom-risotto',name:'Mushroom Risotto',detail:'roasted mushrooms · parmesan · thyme',emoji:'🍄',signals:['roasted','earthy','creamy','rich','savory']},
+ {id:'dark-chocolate-torte',name:'Dark Chocolate Torte',detail:'cocoa · bittersweet · silky',emoji:'🍫',signals:['bitter','roasted','rich','sweet']},
+ {id:'goat-cheese-toast',name:'Goat Cheese Toast',detail:'tangy cheese · toasted bread · olive oil',emoji:'🥖',signals:['tangy','fatty','toasted','savory']},
+ {id:'hot-honey-pizza',name:'Hot Honey Pizza',detail:'pepperoni · chile honey · mozzarella',emoji:'🍕',signals:['spicy','sweet','fatty','savory','rich']},
+ {id:'birthday-cake',name:'Birthday Cake',detail:'vanilla frosting · butter cake · sprinkles',emoji:'🎂',signals:['sweet','vanilla','creamy','rich']},
+ {id:'fried-chicken-waffles',name:'Fried Chicken & Waffles',detail:'crispy chicken · maple · butter',emoji:'🍗',signals:['fried','savory','sweet','fatty','rich']},
+ {id:'nacho-cheese-doritos',name:'Nacho Cheese Chips',detail:'cheesy · salty · crunchy · loud',emoji:'🧀',signals:['salty','cheesy','savory','fatty']},
+ {id:'sour-gummy-worms',name:'Sour Gummy Worms',detail:'sour sugar · fruit candy · chaos',emoji:'🪱',signals:['sour','fruity','sweet','acidic']},
+ {id:'dill-pickle',name:'Dill Pickle',detail:'salty · sour · dill',emoji:'🥒',signals:['salty','sour','herbal','acidic']},
+ {id:'honey-bun',name:'Honey Bun',detail:'sticky glaze · cinnamon · soft pastry',emoji:'🍯',signals:['sweet','spiced','rich','baked']}
+];
 
-function matchesAnchor(item, normalized){
- if(!item)return false;
- const values=[item.name,item.id,...(item.ingredients??[])].map(v=>String(v).toLowerCase());
- return values.some(v=>v===normalized||v.includes(normalized)||normalized.includes(v));
+const complement={toasted:['roasted','baked','sweet'],honeyed:['sweet','baked'],green:['creamy','fatty','rich'],herbaceous:['savory','fatty'],herbal:['savory','cheesy'],aromatic:['spiced','savory'],woody:['roasted','rich'],tart:['rich','sweet','fatty'],fruity:['sweet','bitter','sour'],bright:['rich','fatty','fried'],acidic:['rich','fatty','sweet'],resinous:['sweet','spiced','fatty'],evergreen:['sweet','spiced'],citrus:['fried','fatty','sweet'],floral:['sweet','salty','sour'],lemony:['fried','fatty','salty'],soft:['spicy','salty']};
+const contrast={green:['rich','creamy'],bright:['rich','fatty'],acidic:['fatty','sweet'],citrus:['fatty','fried'],floral:['salty','savory'],soft:['spicy','sour'],tart:['sweet','rich'],resinous:['sweet','creamy'],evergreen:['sweet','rich']};
+const chaosFoods=new Set(['hot-honey-pizza','birthday-cake','fried-chicken-waffles','nacho-cheese-doritos','sour-gummy-worms','dill-pickle','honey-bun']);
+
+function scoreTeaFood(tea,food,mode){
+ let score=0;const reasons=[];
+ for(const signal of tea.signals){for(const f of food.signals){if((complement[signal]||[]).includes(f)){score+=2;reasons.push(`${signal} ↔ ${f} complement`);}if((contrast[signal]||[]).includes(f)){score+=1;reasons.push(`${signal} ↔ ${f} contrast`);}}}
+ if(mode==='chaos'&&chaosFoods.has(food.id))score+=3;
+ if(mode==='menu'&&!chaosFoods.has(food.id))score+=2;
+ return {score,reasons:[...new Set(reasons)]};
+}
+function matches(item,q){if(!item)return false;const n=String(q).trim().toLowerCase();return [item.name,item.id,...(item.ingredients||[])].some(v=>String(v).toLowerCase()===n||String(v).toLowerCase().includes(n));}
+function buildExperiment(tea,food,mode,score){
+ const evidence=tea.evidence;const why=score.reasons.slice(0,3);
+ return {id:`${mode}-${tea.id}-${food.id}`,mode,modeLabel:mode==='chaos'?'Chaos Lab':'Pairing Menu',modeEmoji:mode==='chaos'?'🤪':'🍽️',food,tea,evidence,hypothesis:{id:`hyp-${tea.id}-${food.id}`,basis:[`Blendgine compared ${tea.name}'s evidence-backed sensory signals (${tea.signals.join(', ')}) with ${food.name}'s food profile.`,why.length?`Strongest candidate signals: ${why.join('; ')}.`:'This is an exploratory candidate with limited signal overlap.'],epistemicStatus:'evidence_informed_hypothesis',boundary:'This is a generated pairing hypothesis, not a scientifically proven preference. Human tasting decides whether it works.'},defaultDescriptor:'interesting',remix:{proposal:`Change one variable—brew strength, temperature, or bite size—and retaste ${tea.name} with ${food.name}.`,reason:'The next proposal uses the human observation to test which sensory variable is driving the experience.'},score:score.score};
 }
 
 export function findPairing({anchorType='food',anchor='',mode='menu'}={}){
- const normalized=String(anchor).trim().toLowerCase();
- const modePool=pairingCatalog.filter(p=>p.mode===mode);
- if(!normalized)return modePool[0]??pairingCatalog[0];
-
- // The thing the human supplied is authoritative. Search every experiment for
- // that anchor before considering mode so switching Menu/Chaos can never
- // silently replace Fig Leaf, Heal-All, or another selected tea/food.
- const anchored=pairingCatalog.find(p=>matchesAnchor(p[anchorType],normalized));
- if(anchored)return anchored;
-
- // Unknown anchors are explicit. Never silently substitute the first catalog item.
- return null;
+ const teas=teaProfiles;const foods=foodProfiles;
+ if(anchorType==='tea'){
+  const tea=teas.find(t=>matches(t,anchor));if(!tea)return null;
+  const candidates=foods.map(food=>({food,...scoreTeaFood(tea,food,mode)})).filter(c=>mode!=='chaos'||chaosFoods.has(c.food.id)).sort((a,b)=>b.score-a.score||a.food.name.localeCompare(b.food.name));
+  const best=candidates[0];return best?buildExperiment(tea,best.food,mode,best):null;
+ }
+ const food=foods.find(f=>matches(f,anchor));if(!food)return null;
+ const candidates=teas.map(tea=>({tea,...scoreTeaFood(tea,food,mode)})).sort((a,b)=>b.score-a.score||a.tea.name.localeCompare(b.tea.name));
+ const best=candidates[0];return best?buildExperiment(best.tea,food,mode,best):null;
 }
+
+export const defaultPairingId='generated-default';
+export const pairingCatalog=[];
+export const availableTeas=teaProfiles;
+export const availableFoods=foodProfiles;
