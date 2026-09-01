@@ -45,12 +45,23 @@ export const defaultPairingId='menu-figleaf-risotto';
 export const availableTeas=pairingCatalog.map(p=>p.tea).filter((tea,index,all)=>all.findIndex(t=>t.id===tea.id)===index);
 export const availableFoods=pairingCatalog.map(p=>p.food).filter((food,index,all)=>all.findIndex(f=>f.id===food.id)===index);
 
+function matchesAnchor(item, normalized){
+ if(!item)return false;
+ const values=[item.name,item.id,...(item.ingredients??[])].map(v=>String(v).toLowerCase());
+ return values.some(v=>v===normalized||v.includes(normalized)||normalized.includes(v));
+}
+
 export function findPairing({anchorType='food',anchor='',mode='menu'}={}){
  const normalized=String(anchor).trim().toLowerCase();
- const pool=pairingCatalog.filter(p=>p.mode===mode);
- if(!normalized)return pool[0]??pairingCatalog[0];
- const exact=pool.find(p=>String(p[anchorType]?.name||'').toLowerCase()===normalized||String(p[anchorType]?.id||'').toLowerCase()===normalized);
- if(exact)return exact;
- const fuzzy=pool.find(p=>String(p[anchorType]?.name||'').toLowerCase().includes(normalized)||String(p[anchorType]?.ingredients||[]).toLowerCase().includes(normalized));
- return fuzzy??pool[0]??pairingCatalog[0];
+ const modePool=pairingCatalog.filter(p=>p.mode===mode);
+ if(!normalized)return modePool[0]??pairingCatalog[0];
+
+ // The thing the human supplied is authoritative. Search every experiment for
+ // that anchor before considering mode so switching Menu/Chaos can never
+ // silently replace Fig Leaf, Heal-All, or another selected tea/food.
+ const anchored=pairingCatalog.find(p=>matchesAnchor(p[anchorType],normalized));
+ if(anchored)return anchored;
+
+ // Unknown anchors are explicit. Never silently substitute the first catalog item.
+ return null;
 }
