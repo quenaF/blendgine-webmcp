@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { inspectPairing, recordSensoryObservation, whatDidHumanTeach, refinePairing, resetObservations } from './engine.js';
 import { registerBlendgineWebMCP } from './webmcp.js';
 
@@ -25,9 +25,14 @@ export default function App() {
   const [observations, setObservations] = useState([]);
   const [proposal, setProposal] = useState(null);
   const [activity, setActivity] = useState([]);
-  const [webmcpReady] = useState(() => registerBlendgineWebMCP(event => {
-    setActivity(current => [event, ...current].slice(0, 8));
-  }));
+  const [webmcpReady, setWebmcpReady] = useState(false);
+
+  useEffect(() => {
+    const ready = registerBlendgineWebMCP(event => {
+      setActivity(current => [event, ...current].slice(0, 8));
+    });
+    setWebmcpReady(ready);
+  }, []);
 
   function submitTaste() {
     const observation = recordSensoryObservation({ descriptor, intensity, phase, humanWords });
