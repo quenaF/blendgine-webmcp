@@ -1,13 +1,14 @@
-import { findPairing } from './data.js';
+import { findPairing, normalizeAnchor } from './data.js';
 
 const observations=[];
 let activeExperiment=findPairing({anchorType:'food',anchor:'Mushroom Risotto',mode:'menu'});
 
 export function requestPairing(input={}){
  const anchorType=input.anchorType==='tea'?'tea':'food';const mode=input.mode==='chaos'?'chaos':'menu';
- const found=findPairing({anchorType,anchor:input.anchor??'',mode});
- if(!found)return {supported:false,anchorType,anchor:String(input.anchor??''),mode,reason:'Blendgine does not have enough evidence for that anchor yet. It will not silently substitute another item.'};
- activeExperiment=found;return inspectPairing();
+ const rawAnchor=String(input.anchor??'');const normalizedAnchor=normalizeAnchor(rawAnchor,{anchorType});
+ const found=findPairing({anchorType,anchor:rawAnchor,mode});
+ if(!found)return {supported:false,anchorType,anchor:rawAnchor,normalizedAnchor,mode,reason:'Blendgine does not have enough evidence for that anchor yet. It will not silently substitute another item.'};
+ activeExperiment=found;const result=inspectPairing();return {...result,request:{anchorType,anchor:rawAnchor,normalizedAnchor,interpretationNote:rawAnchor.trim().toLowerCase()!==normalizedAnchor?`Blendgine interpreted “${rawAnchor.trim()}” as “${normalizedAnchor}”.`:null}};
 }
 export function setPairingMode(mode){return requestPairing({anchorType:'food',anchor:'Mushroom Risotto',mode});}
 export function resetObservations(){observations.length=0;activeExperiment=findPairing({anchorType:'food',anchor:'Mushroom Risotto',mode:'menu'});}
