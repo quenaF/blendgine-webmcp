@@ -1,12 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { requestPairing, recordSensoryObservation, whatDidHumanTeach, refinePairing, resetObservations } from '../src/engine.js';
-import { rankPairings } from '../src/data.js';
+import { rankPairings, normalizeAnchor } from '../src/data.js';
 import { createBlendgineTools } from '../src/webmcp.js';
 
 test.beforeEach(() => resetObservations());
 
 test('food anchor is preserved while Blendgine generates an herbal tea candidate', () => {const result=requestPairing({anchorType:'food',anchor:'Mushroom Risotto',mode:'menu'});assert.equal(result.supported,true);assert.equal(result.food.name,'Mushroom Risotto');assert.ok(result.tea.name);assert.match(result.hypothesis.epistemicStatus,/hypothesis/);assert.match(result.evidenceBoundary,/generated/i);});
+
+test('natural-language tea suffixes normalize to the same catalog anchor',()=>{assert.equal(normalizeAnchor('Fig Leaf Tea',{anchorType:'tea'}),'fig leaf');assert.equal(normalizeAnchor('  FIG LEAF herbal tea  ',{anchorType:'tea'}),'fig leaf');const natural=requestPairing({anchorType:'tea',anchor:'fig leaf tea',mode:'menu'});const canonical=requestPairing({anchorType:'tea',anchor:'Fig Leaf',mode:'menu'});assert.equal(natural.supported,true);assert.equal(natural.tea.name,'Fig Leaf');assert.equal(natural.food.name,canonical.food.name);assert.equal(natural.request.normalizedAnchor,'fig leaf');assert.match(natural.request.interpretationNote,/interpreted/i);});
+
+test('common tea aliases resolve before lookup',()=>{const result=requestPairing({anchorType:'tea',anchor:'fig tea',mode:'menu'});assert.equal(result.supported,true);assert.equal(result.tea.name,'Fig Leaf');});
 
 test('Fig Leaf keeps direct tea sensory evidence separate from the toast assumption',()=>{const result=requestPairing({anchorType:'tea',anchor:'Fig Leaf',mode:'menu'});assert.equal(result.tea.name,'Fig Leaf');assert.equal(result.tea.processing.state,'slightly toasted');assert.equal(result.evidence.level,'verified');assert.equal(result.evidence.records[0].doi,'10.3390/beverages11010016');assert.equal(result.evidence.records[0].plantPart,'leaf');assert.match(result.evidence.records[0].doesNotSupport,/toast-specific/i);});
 
